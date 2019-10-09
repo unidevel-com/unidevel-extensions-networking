@@ -5,9 +5,15 @@ namespace Unidevel.Extensions.Networking
 {
     public interface IRestClient
     {
-        Task<string> QueryAsync(Uri uri, string request, string method = "POST", object headers = null, string authorization = null);
-        Task<Rs> QueryAsync<Rq, Rs>(Uri uri, Rq request, string method = "POST", object headers = null, string authorization = null);
-        Task SubmitAsync(Uri uri, string request, string method = "POST", object headers = null, string authorization = null);
-        Task SubmitAsync<Rq>(Uri uri, Rq request, string method = "POST", object headers = null, string authorization = null);
+        Uri BaseUri { get; set; }
+
+        Task<string> QueryAsync(string url, string request, string method = "POST");
+        Task<Rs> QueryAsync<Rq, Rs>(string url, Rq request, string method = "POST") where Rq : class where Rs : class;
+        Task<string> QueryAsync(string url, string method = "GET");
+        Task<Rs> QueryAsync<Rs>(string url, string method = "GET") where Rs : class;
+
+        Task SubmitAsync(string url, string method = "GET");
+        Task SubmitAsync(string url, string request, string method = "POST");
+        Task SubmitAsync<Rq>(string url, Rq request, string method = "POST") where Rq : class;
     }
 }
