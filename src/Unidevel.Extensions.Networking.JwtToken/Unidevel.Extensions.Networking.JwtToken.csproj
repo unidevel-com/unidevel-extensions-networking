@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Unidevel.Extensions.Networking</RootNamespace>
-    <Version>0.5.0</Version>
+    <Version>0.5.1</Version>
     <Authors>Grzegorz Strzałkowski</Authors>
     <Company>Unidevel.com</Company>
     <Product>Unidevel.Extensions.Networking.JwtToken</Product>
@@ -13,6 +13,8 @@
     <RepositoryType>GIT</RepositoryType>
     <RepositoryUrl>http://github.com/unidevel-com/unidevel-extensions-networking</RepositoryUrl>
     <PackageTags>jwt, token, codec, coder, decoder, decode, encode, bearer, generate</PackageTags>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>Unidevel.Extensions.Networking.JwtToken.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>
