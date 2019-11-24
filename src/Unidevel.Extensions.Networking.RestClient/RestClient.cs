@@ -1,21 +1,24 @@
 ﻿using System;
 using System.Net;
-using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace Unidevel.Extensions.Networking
 {
     public class RestClient: IRestClient
     {
         private readonly ILogger<RestClient> _logger;
+        private readonly JsonSerializerOptions options = new JsonSerializerOptions();
 
         public Uri BaseUri { get; set; }
 
         public RestClient(ILogger<RestClient> logger = null)
         {
             _logger = logger;
+            options.PropertyNameCaseInsensitive = true;
+            options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
         }
 
         public RestClient(Uri baseUri, ILogger<RestClient> logger = null) : this(logger)
@@ -47,7 +50,8 @@ namespace Unidevel.Extensions.Networking
             var requestMessage = await serializeRequest(request);
             var responseMessage = await QueryAsync(url, requestMessage, method);
 
-            return await deserializeResponse<Rs>(responseMessage);
+            var result = await deserializeResponse<Rs>(responseMessage);
+            return result;
         }
 
         public async Task<string> QueryAsync(string url, string request, string method = RestMethod.POST)
@@ -110,8 +114,11 @@ namespace Unidevel.Extensions.Networking
 
         public async Task SubmitAsync(string url, string request, string method = RestMethod.POST) => await QueryAsync(url, request, method);
 
-        private Task<string> serializeRequest<Rq>(Rq request) where Rq : class => Task.FromResult(request != null ? JsonConvert.SerializeObject(request) : null);
+        private Task<string> serializeRequest<Rq>(Rq request) where Rq : class => Task.FromResult(request != null ? JsonSerializer.Serialize(request, options) : null);
 
-        private Task<Rs> deserializeResponse<Rs>(string responseMessage) where Rs : class => Task.FromResult(responseMessage != null ? JsonConvert.DeserializeObject<Rs>(responseMessage) : null);
+        private Task<Rs> deserializeResponse<Rs>(string responseMessage) where Rs : class
+        {
+            return Task.FromResult(responseMessage != null ? JsonSerializer.Deserialize<Rs>(responseMessage, options) : null);
+        }
     }
 }
